@@ -1,7 +1,7 @@
 {
   "name": "voltrevo-event-emitter",
   "version": "0.0.0",
-  "description": "My utopian vision of how eventing can be done differently.",
+  "description": "My utopian vision for how eventing can be done differently.",
   "homepage": "https://github.com/voltrevo/voltrevo-event-emitter#readme",
   "repository": "voltrevo/voltrevo-event-emitter",
   "author": {
@@ -20,14 +20,16 @@
     "browser"
   ],
   "devDependencies": {
+    "eslint-config-voltrevo": "0.0.3",
+    "eslint-plugin-require-path-exists": "^1.0.15",
     "gulp": "^3.6.0",
+    "gulp-coveralls": "^0.1.0",
     "gulp-eslint": "^1.0.0",
     "gulp-exclude-gitignore": "^1.0.0",
     "gulp-istanbul": "^0.9.0",
     "gulp-mocha": "^2.0.0",
-    "gulp-plumber": "^1.0.0",
     "gulp-nsp": "^0.4.5",
-    "gulp-coveralls": "^0.1.0"
+    "gulp-plumber": "^1.0.0"
   },
   "scripts": {
     "prepublish": "gulp prepublish",
