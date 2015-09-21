@@ -20,7 +20,7 @@ var EventEmitter = require('voltrevo-event-emitter');
 
 var ee = EventEmitter();
 
-// Events are asynchronous
+// events are asynchronous
 
 ee.emit('foo', 'bar');
 
