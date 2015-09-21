@@ -154,4 +154,57 @@ describe('EventEmitter', function() {
       d: 2
     });
   });
+
+  it('should call handlers in the order they were added', function() {
+    var sequence = [];
+
+    var makeHandler = function(tag) {
+      return function() {
+        sequence.push(tag);
+      };
+    };
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      ee.emit('foo');
+
+      ee.on('foo', makeHandler('a'));
+
+      var cListener = ee.on('foo', makeHandler('c'));
+
+      ee.on('foo', makeHandler('b'));
+
+      cListener.remove();
+      ee.on('foo', makeHandler('c'));
+    });
+
+    assert.deepEqual(sequence, ['a', 'b', 'c']);
+  });
+
+  it('should remove multiple handlers', function() {
+    var counts = {};
+
+    var countingHandler = function(name) {
+      counts[name] = counts[name] || 0;
+
+      return function() {
+        counts[name]++;
+      };
+    };
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      ee.emit('foo');
+
+      ee.on('foo', countingHandler('a')).remove();
+      ee.on('foo', countingHandler('b')).remove();
+    });
+
+    assert.deepEqual(counts, {
+      a: 0,
+      b: 0
+    });
+  });
 });
