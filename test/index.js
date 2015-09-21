@@ -116,4 +116,42 @@ describe('EventEmitter', function() {
       d: 2
     });
   });
+
+  it('extra calls to remove do nothing', function() {
+    var counts = {};
+
+    var countingHandler = function(name) {
+      counts[name] = counts[name] || 0;
+
+      return function() {
+        counts[name]++;
+      };
+    };
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      var listeners = ['a', 'b', 'c'].map(function(letter) {
+        return ee.on('foo', countingHandler(letter));
+      });
+
+      ee.emit('foo');
+
+      listeners[1].remove();
+      listeners[1].remove();
+
+      ee.on('foo', countingHandler('d'));
+
+      listeners[1].remove();
+
+      ee.emit('foo');
+    });
+
+    assert.deepEqual(counts, {
+      a: 2,
+      b: 0,
+      c: 2,
+      d: 2
+    });
+  });
 });
