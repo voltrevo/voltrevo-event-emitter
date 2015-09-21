@@ -1,8 +1,8 @@
 # voltrevo-event-emitter
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage Status](https://coveralls.io/repos/voltrevo/voltrevo-event-emitter/badge.svg?branch=master&service=github)](https://coveralls.io/github/voltrevo/voltrevo-event-emitter?branch=master) [![Code Climate](https://codeclimate.com/github/voltrevo/voltrevo-event-emitter/badges/gpa.svg)](https://codeclimate.com/github/voltrevo/voltrevo-event-emitter)
-> My utopian vision for how eventing can be done differently.
+> My utopian vision for simple eventing.
 
-An event emitter that probably does everything you actually need in only 86 lines of code.
+An event emitter that probably does everything you actually need in only 80 lines of code.
 
 ## Install
 
@@ -37,8 +37,7 @@ ee.once('boom', function() {
   console.log('boom'); // only one boom
 });
 
-// .on and .once return Collection elements, which have .value (your handler)
-// and .remove
+// .on and .once return Collection handles, which have .remove
 
 ee.emit('unicorn');
 
