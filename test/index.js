@@ -41,4 +41,79 @@ describe('EventEmitter', function() {
 
     assert(!called);
   });
+
+  it('should not call a once listener more than once', function() {
+    var calls = 0;
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      ee.emit('foo');
+      ee.emit('foo');
+
+      ee.once('foo', function() {
+        calls++;
+      });
+
+      ee.emit('foo');
+      ee.emit('foo');
+    });
+
+    assert.equal(calls, 1);
+  });
+
+  it('should call an on listener more than once', function() {
+    var calls = 0;
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      ee.emit('foo');
+      ee.emit('foo');
+
+      ee.on('foo', function() {
+        calls++;
+      });
+
+      ee.emit('foo');
+      ee.emit('foo');
+    });
+
+    assert.equal(calls, 4);
+  });
+
+  it('should handle adding handlers after removals', function() {
+    var counts = {};
+
+    var countingHandler = function(name) {
+      counts[name] = counts[name] || 0;
+
+      return function() {
+        counts[name]++;
+      };
+    };
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      var listeners = ['a', 'b', 'c'].map(function(letter) {
+        return ee.on('foo', countingHandler(letter));
+      });
+
+      ee.emit('foo');
+
+      listeners[1].remove();
+
+      ee.on('foo', countingHandler('d'));
+
+      ee.emit('foo');
+    });
+
+    assert.deepEqual(counts, {
+      a: 2,
+      b: 0,
+      c: 2,
+      d: 2
+    });
+  });
 });
