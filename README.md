@@ -2,6 +2,7 @@
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage Status](https://coveralls.io/repos/voltrevo/voltrevo-event-emitter/badge.svg?branch=master&service=github)](https://coveralls.io/github/voltrevo/voltrevo-event-emitter?branch=master) [![Code Climate](https://codeclimate.com/github/voltrevo/voltrevo-event-emitter/badges/gpa.svg)](https://codeclimate.com/github/voltrevo/voltrevo-event-emitter)
 > My utopian vision for how eventing can be done differently.
 
+An event emitter that probably does everything you actually need in only 86 lines of code.
 
 ## Install
 
@@ -13,9 +14,39 @@ $ npm install --save voltrevo-event-emitter
 ## Usage
 
 ```js
-var voltrevoEventEmitter = require('voltrevo-event-emitter');
+'use strict';
 
-voltrevoEventEmitter('Rainbow');
+var EventEmitter = require('voltrevo-event-emitter');
+
+var ee = EventEmitter();
+
+// Events are asynchronous
+
+ee.emit('foo', 'bar');
+
+ee.on('foo', function(value) {
+  console.log(value); // bar
+});
+
+// .once works as usual
+
+ee.emit('boom');
+ee.emit('boom');
+
+ee.once('boom', function() {
+  console.log('boom'); // only one boom
+});
+
+// .on and .once return Collection elements, which have .value (your listener)
+// and .remove
+
+ee.emit('unicorn');
+
+var listener = ee.on('unicorn', function() {
+  console.log('A wild unicorn appeared!'); // this never happens
+});
+
+listener.remove();
 ```
 
 ## License
