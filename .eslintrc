@@ -8,6 +8,7 @@
     "no-undef-init": 0,
     "no-nested-ternary": 0,
     "new-cap": 0,
-    "no-constant-condition": 0
+    "no-constant-condition": 0,
+    "no-loop-func": 0
   }
 }
