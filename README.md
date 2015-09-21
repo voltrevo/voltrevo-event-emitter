@@ -37,7 +37,7 @@ ee.once('boom', function() {
   console.log('boom'); // only one boom
 });
 
-// .on and .once return Collection elements, which have .value (your listener)
+// .on and .once return Collection elements, which have .value (your handler)
 // and .remove
 
 ee.emit('unicorn');
