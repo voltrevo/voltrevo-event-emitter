@@ -1,6 +1,6 @@
 {
   "name": "voltrevo-event-emitter",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "My utopian vision for how eventing can be done differently.",
   "homepage": "https://github.com/voltrevo/voltrevo-event-emitter#readme",
   "repository": "voltrevo/voltrevo-event-emitter",
