@@ -23,4 +23,22 @@ describe('EventEmitter', function() {
 
     assert(called);
   });
+
+  it('should remove an event', function() {
+    var called = false;
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      ee.emit('foo');
+
+      var listener = ee.once('foo', function() {
+        called = true;
+      });
+
+      listener.remove();
+    });
+
+    assert(!called);
+  });
 });
