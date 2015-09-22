@@ -201,4 +201,41 @@ describe('EventEmitter', function() {
 
     assert.deepEqual(sequence.elements, ['a', 'b', 'a', 'b', 'x']);
   });
+
+  it('allows adding the same listener multiple times', function() {
+    // This test is a port of:
+    // https://github.com/Olical/EventEmitter/blob/8553de790c/tests/tests.js#L135-L148
+    //
+    // With an important difference: it checks the opposite behaviour! A key motivation behind
+    // .on/.once returning a listener handle with .remove instead of having a .off/.removeListener
+    // method is so that you can differentiate between separate bindings of the same listener. This
+    // makes the behaviour below possible in a non-confusing way.
+    //
+    // Without getting a .remove from the listener binding, the EventEmitter implementation has no
+    // choice but either ignore extra bindings of one listener, or fail to preserve the ordering you
+    // expect when you remove a listener, since that listener may already be on the event, and the
+    // EventEmitter cannot tell which one you intended to remove.
+    //
+    // It is very reasonable to expect that adding a listener multiple times will result in multiple
+    // calls to that listener on the same emit. It may be rare that you actually want to do that but
+    // I believe that violating this expectation is a flaw in all popular EventEmitter
+    // implementations.
+
+    var count = 0;
+
+    var adder = function() {
+      count += 1;
+    };
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      ee.on('foo', adder);
+      ee.on('foo', adder);
+      ee.on('foo', adder);
+      ee.emit('foo');
+    });
+
+    assert.strictEqual(count, 3);
+  });
 });
