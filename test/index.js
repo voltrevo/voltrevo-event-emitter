@@ -5,6 +5,7 @@
 var assert = require('assert');
 
 var asyncBox = require('./asyncBox.js');
+var CountingMap = require('./CountingMap.js');
 var EventEmitter = require('../lib');
 
 describe('EventEmitter', function() {
@@ -83,33 +84,25 @@ describe('EventEmitter', function() {
   });
 
   it('should handle adding handlers after removals', function() {
-    var counts = {};
-
-    var countingHandler = function(name) {
-      counts[name] = counts[name] || 0;
-
-      return function() {
-        counts[name]++;
-      };
-    };
+    var cm = CountingMap();
 
     asyncBox(function(async) {
       var ee = EventEmitter(async);
 
       var listeners = ['a', 'b', 'c'].map(function(letter) {
-        return ee.on('foo', countingHandler(letter));
+        return ee.on('foo', cm.handler(letter));
       });
 
       ee.emit('foo');
 
       listeners[1].remove();
 
-      ee.on('foo', countingHandler('d'));
+      ee.on('foo', cm.handler('d'));
 
       ee.emit('foo');
     });
 
-    assert.deepEqual(counts, {
+    assert.deepEqual(cm.counts, {
       a: 2,
       b: 0,
       c: 2,
@@ -118,21 +111,13 @@ describe('EventEmitter', function() {
   });
 
   it('extra calls to remove do nothing', function() {
-    var counts = {};
-
-    var countingHandler = function(name) {
-      counts[name] = counts[name] || 0;
-
-      return function() {
-        counts[name]++;
-      };
-    };
+    var cm = CountingMap();
 
     asyncBox(function(async) {
       var ee = EventEmitter(async);
 
       var listeners = ['a', 'b', 'c'].map(function(letter) {
-        return ee.on('foo', countingHandler(letter));
+        return ee.on('foo', cm.handler(letter));
       });
 
       ee.emit('foo');
@@ -140,14 +125,14 @@ describe('EventEmitter', function() {
       listeners[1].remove();
       listeners[1].remove();
 
-      ee.on('foo', countingHandler('d'));
+      ee.on('foo', cm.handler('d'));
 
       listeners[1].remove();
 
       ee.emit('foo');
     });
 
-    assert.deepEqual(counts, {
+    assert.deepEqual(cm.counts, {
       a: 2,
       b: 0,
       c: 2,
@@ -183,26 +168,18 @@ describe('EventEmitter', function() {
   });
 
   it('should remove multiple handlers', function() {
-    var counts = {};
-
-    var countingHandler = function(name) {
-      counts[name] = counts[name] || 0;
-
-      return function() {
-        counts[name]++;
-      };
-    };
+    var cm = CountingMap();
 
     asyncBox(function(async) {
       var ee = EventEmitter(async);
 
       ee.emit('foo');
 
-      ee.on('foo', countingHandler('a')).remove();
-      ee.on('foo', countingHandler('b')).remove();
+      ee.on('foo', cm.handler('a')).remove();
+      ee.on('foo', cm.handler('b')).remove();
     });
 
-    assert.deepEqual(counts, {
+    assert.deepEqual(cm.counts, {
       a: 0,
       b: 0
     });
