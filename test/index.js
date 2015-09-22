@@ -180,4 +180,25 @@ describe('EventEmitter', function() {
       b: 0
     });
   });
+
+  it('adding a listener from a listener should not change listener order', function() {
+    var sequence = Sequence();
+
+    asyncBox(function(async) {
+      var ee = EventEmitter(async);
+
+      ee.emit('foo');
+
+      ee.on('foo', sequence.adder('a'));
+
+      ee.once('foo', function() {
+        ee.on('foo', sequence.adder('x'));
+        ee.emit('foo');
+      });
+
+      ee.on('foo', sequence.adder('b'));
+    });
+
+    assert.deepEqual(sequence.elements, ['a', 'b', 'a', 'b', 'x']);
+  });
 });
