@@ -6,9 +6,9 @@ var assert = require('assert');
 
 var EventEmitter = require('../lib');
 
-var asyncBox = require('./asyncBox.js');
-var CountingMap = require('./CountingMap.js');
-var Sequence = require('./Sequence.js');
+var asyncBox = require('./util/asyncBox.js');
+var CountingMap = require('./util/CountingMap.js');
+var Sequence = require('./util/Sequence.js');
 
 describe('EventEmitter', function() {
   it('should emit an event', function() {
