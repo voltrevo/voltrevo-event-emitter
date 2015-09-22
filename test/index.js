@@ -4,9 +4,11 @@
 
 var assert = require('assert');
 
+var EventEmitter = require('../lib');
+
 var asyncBox = require('./asyncBox.js');
 var CountingMap = require('./CountingMap.js');
-var EventEmitter = require('../lib');
+var Sequence = require('./Sequence.js');
 
 describe('EventEmitter', function() {
   it('should emit an event', function() {
@@ -141,30 +143,24 @@ describe('EventEmitter', function() {
   });
 
   it('should call handlers in the order they were added', function() {
-    var sequence = [];
-
-    var makeHandler = function(tag) {
-      return function() {
-        sequence.push(tag);
-      };
-    };
+    var sequence = Sequence();
 
     asyncBox(function(async) {
       var ee = EventEmitter(async);
 
       ee.emit('foo');
 
-      ee.on('foo', makeHandler('a'));
+      ee.on('foo', sequence.adder('a'));
 
-      var cListener = ee.on('foo', makeHandler('c'));
+      var cListener = ee.on('foo', sequence.adder('c'));
 
-      ee.on('foo', makeHandler('b'));
+      ee.on('foo', sequence.adder('b'));
 
       cListener.remove();
-      ee.on('foo', makeHandler('c'));
+      ee.on('foo', sequence.adder('c'));
     });
 
-    assert.deepEqual(sequence, ['a', 'b', 'c']);
+    assert.deepEqual(sequence.elements, ['a', 'b', 'c']);
   });
 
   it('should remove multiple handlers', function() {
